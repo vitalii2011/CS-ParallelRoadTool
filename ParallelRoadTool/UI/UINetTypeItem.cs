@@ -15,12 +15,13 @@ namespace ParallelRoadTool.UI
         private const int LabelWidth = 250;
         private const float ColumnPadding = 8f;
         private const int ReverseButtonWidth = 36;
-        public float HorizontalOffset;
-        public int Index;
 
-        public NetInfo NetInfo;
-        public float VerticalOffset;
+        public NetInfo NetInfo;        
+        public int Index;
+        public string FilterText = string.Empty;
         public bool IsReversed;
+        public float HorizontalOffset;
+        public float VerticalOffset;
 
         private UILabel Label { get; set; }
         private UITextField HorizontalOffsetField { get; set; }
@@ -39,7 +40,7 @@ namespace ParallelRoadTool.UI
         public Action OnDeleteCallback { private get; set; }
         public Action OnAddCallback { private get; set; }
 
-        private MethodInfo _openPopup = typeof(UIDropDown).GetMethod("OpenPopup");
+        private MethodInfo _openPopup = typeof(UIDropDown).GetMethod("OpenPopup", BindingFlags.NonPublic | BindingFlags.Instance);
 
         public override void Start()
         {
@@ -56,10 +57,6 @@ namespace ParallelRoadTool.UI
             var panel = AddUIComponent<UIPanel>();
             panel.size = new Vector2(size.x, 40);
             panel.relativePosition = Vector2.zero;
-            //panel.autoLayout = true;
-            //panel.autoLayoutDirection = LayoutDirection.Horizontal;
-            //panel.autoLayoutPadding = new RectOffset(4, 4, 4, 4);
-            //panel.autoLayoutStart = LayoutStart.TopLeft;
 
             DropDown = UIUtil.CreateDropDown(panel);
             DropDown.width = LabelWidth;
@@ -94,8 +91,7 @@ namespace ParallelRoadTool.UI
             DropdownFilterField = UIUtil.CreateTextField(this);
             DropdownFilterField.size = new Vector2(panel.size.x - 8, panel.size.y);
             DropdownFilterField.relativePosition = Vector2.zero;
-            DropdownFilterField.zOrder = DropDown.zOrder + 1;            
-            DropdownFilterField.eventClicked += DropdownFilterField_eventClicked;
+            DropdownFilterField.zOrder = DropDown.zOrder + 1;
             DropdownFilterField.eventTextChanged += DropdownFilterField_eventTextChanged;            
             //DropdownFilterField.isVisible = false;
 
@@ -113,13 +109,13 @@ namespace ParallelRoadTool.UI
             RenderItem();
         }        
 
-        private void PopulateDropDown(string filter = null)
+        private void PopulateDropDown()
         {
             var items = ParallelRoadTool.AvailableRoadTypes
                 .Select(ni => ni.GenerateBeautifiedNetName());
-            if (!string.IsNullOrEmpty(filter))
+            if (!string.IsNullOrEmpty(FilterText))
             {
-                items = items.Where(i => i.Contains(filter));
+                items = items.Where(i => i.ToLowerInvariant().Contains(FilterText.ToLowerInvariant()));
                 IsFiltered = true;
             }
             DropDown.items = items.ToArray();
@@ -137,6 +133,7 @@ namespace ParallelRoadTool.UI
 
             if (!Populated) PopulateDropDown();
 
+            DropdownFilterField.text = FilterText;
             HorizontalOffsetField.text = HorizontalOffset.ToString(CultureInfo.InvariantCulture);
             VerticalOffsetField.text = VerticalOffset.ToString(CultureInfo.InvariantCulture);
             ReverseCheckbox.isChecked = IsReversed;
@@ -199,15 +196,11 @@ namespace ParallelRoadTool.UI
         private void DropdownFilterField_eventTextChanged(UIComponent component, string value)
         {
             DebugUtils.Log($"Searching for {value} ...");
-            PopulateDropDown(value);
+            FilterText = value;
+            PopulateDropDown();
             DropDown.selectedIndex = 0;
             DropDown_eventSelectedIndexChanged(DropDown, 0);
             DebugUtils.Log($"Found {DropDown.items.Length} items");
-        }
-
-        private void DropdownFilterField_eventClicked(UIComponent component, UIMouseEventParameter eventParam)
-        {
-            _openPopup.Invoke(DropDown, null);
         }
     }
 }

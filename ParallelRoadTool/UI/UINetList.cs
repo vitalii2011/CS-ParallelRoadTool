@@ -47,7 +47,7 @@ namespace ParallelRoadTool.UI
 
                 DebugUtils.Log($"{_currentTool.NetInfo} halfWidth: {_currentTool.NetInfo.m_halfWidth}");
 
-                var item = new NetTypeItem(netInfo, prevOffset + netInfo.m_halfWidth * 2, 0, false);
+                var item = new NetTypeItem(netInfo, string.Empty, prevOffset + netInfo.m_halfWidth * 2, 0, false);
                 List.Add(item);
 
                 RenderList();
@@ -93,6 +93,7 @@ namespace ParallelRoadTool.UI
 
                 var comp = AddUIComponent<UINetTypeItem>();
                 comp.NetInfo = item.NetInfo;
+                comp.FilterText = item.FilterText;
                 comp.HorizontalOffset = item.HorizontalOffset;
                 comp.VerticalOffset = item.VerticalOffset;
                 comp.IsReversed = item.IsReversed;
@@ -109,13 +110,14 @@ namespace ParallelRoadTool.UI
                 comp.OnChangedCallback = () =>
                 {
                     var i = List[comp.Index];
+                    i.FilterText = comp.FilterText;
                     i.HorizontalOffset = comp.HorizontalOffset;
                     i.VerticalOffset = comp.VerticalOffset;
                     i.NetInfo = comp.IsFiltered 
                         ? ParallelRoadTool.AvailableRoadTypes.FirstOrDefault(n => n.GenerateBeautifiedNetName() == comp.DropDown.selectedValue) 
                         : comp.DropDown.selectedIndex == 0
                             ? PrefabCollection<NetInfo>.FindLoaded(_currentTool.NetInfo.name)
-                            : ParallelRoadTool.AvailableRoadTypes[comp.DropDown.selectedIndex];                    
+                            : ParallelRoadTool.AvailableRoadTypes[comp.DropDown.selectedIndex];
                     i.IsReversed = comp.ReverseCheckbox.isChecked;
 
                     DebugUtils.Message(
