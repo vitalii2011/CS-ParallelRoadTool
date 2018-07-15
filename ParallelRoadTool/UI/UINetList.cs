@@ -111,9 +111,11 @@ namespace ParallelRoadTool.UI
                     var i = List[comp.Index];
                     i.HorizontalOffset = comp.HorizontalOffset;
                     i.VerticalOffset = comp.VerticalOffset;
-                    i.NetInfo = comp.DropDown.selectedIndex == 0
-                        ? PrefabCollection<NetInfo>.FindLoaded(_currentTool.NetInfo.name)
-                        : ParallelRoadTool.AvailableRoadTypes[comp.DropDown.selectedIndex];
+                    i.NetInfo = comp.IsFiltered 
+                        ? ParallelRoadTool.AvailableRoadTypes.FirstOrDefault(n => n.GenerateBeautifiedNetName() == comp.DropDown.selectedValue) 
+                        : comp.DropDown.selectedIndex == 0
+                            ? PrefabCollection<NetInfo>.FindLoaded(_currentTool.NetInfo.name)
+                            : ParallelRoadTool.AvailableRoadTypes[comp.DropDown.selectedIndex];                    
                     i.IsReversed = comp.ReverseCheckbox.isChecked;
 
                     DebugUtils.Message(

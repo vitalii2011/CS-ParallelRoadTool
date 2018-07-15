@@ -139,6 +139,7 @@ namespace ParallelRoadTool.UI.Base
             textField.color = new Color32(255, 255, 255, 255);
             textField.eventGotFocus += (component, param) => component.color = new Color32(253, 227, 144, 255);
             textField.eventLostFocus += (component, param) => component.color = new Color32(255, 255, 255, 255);
+            textField.submitOnFocusLost = true;            
             return textField;
         }
 
