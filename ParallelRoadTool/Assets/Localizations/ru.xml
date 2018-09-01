@@ -5,7 +5,7 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   name="PRT_ru">
   <strings>
-    <LocalizedString identifier="PRT_TOOLTIPS" key="SnappingToggleButton">Изменить привязку узлов</LocalizedString>
+    <LocalizedString identifier="PRT_TOOLTIPS" key="SnappingToggleButton">Привязка к узлам</LocalizedString>
     <LocalizedString identifier="PRT_TOOLTIPS" key="ToolToggleButton">Переключение Parallel Road Tool</LocalizedString>
     <LocalizedString identifier="PRT_TOOLTIPS" key="TutorialToggleButton">Руководство</LocalizedString>
     <LocalizedString identifier="PRT_TOOLTIPS" key="ReverseToggleButton">Реверс направления</LocalizedString>
